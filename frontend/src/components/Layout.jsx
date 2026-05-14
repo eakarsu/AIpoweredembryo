@@ -29,6 +29,8 @@ export default function Layout() {
     { section: 'AI & Analytics', items: [
       { to: '/predictions', icon: <FiTrendingUp />, label: 'Pregnancy Predictions' },
       { to: '/ai-reports', icon: <FiFileText />, label: 'AI Reports' },
+      { to: '/lab-anomaly-detect', icon: <FiCpu />, label: 'Lab Anomaly Detect' },
+      { to: '/genetic-risk-assess', icon: <FiDna />, label: 'Genetic Risk Assess' },
     ]},
     { section: 'Administration', items: [
       { to: '/doctors', icon: <FiUserCheck />, label: 'Doctors & Staff' },
