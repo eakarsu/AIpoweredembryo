@@ -35,6 +35,7 @@ import GapNoWebhooksForLabEventsPage from './pages/GapNoWebhooksForLabEventsPage
 import GapNoNotificationsModuleGrep0Page from './pages/GapNoNotificationsModuleGrep0Page';
 import GapNoMobileAppForEmbryologistsPage from './pages/GapNoMobileAppForEmbryologistsPage';
 import GapLimitedFrontendPages15For21Page from './pages/GapLimitedFrontendPages15For21Page';
+import CustomViewsPage from './pages/CustomViewsPage';
 function PrivateRoute({ children }) {
   const token = localStorage.getItem('token');
   return token ? children : <Navigate to="/login" />;
@@ -62,6 +63,7 @@ export default function App() {
           <Route path="genetic-risk-assess" element={<GeneticRiskAssess />} />
           <Route path="appointments" element={<Appointments />} />
           <Route path="billing" element={<Billing />} />
+          <Route path="custom-views" element={<CustomViewsPage />} />
         </Route>
       
           {/* // === Batch 06 Gaps & Frontend Mounts === */}

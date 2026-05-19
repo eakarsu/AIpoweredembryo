@@ -57,6 +57,12 @@ app.use('/api/gap-no-notifications-module-grep-0', require('./routes/gapFeat_no_
 app.use('/api/gap-no-mobile-app-for-embryologists', require('./routes/gapFeat_no_mobile_app_for_embryologists'));
 app.use('/api/gap-limited-frontend-pages-15-for-21', require('./routes/gapFeat_limited_frontend_pages_15_for_21'));
 
+// === Custom Views (4 endpoints) — mounted BEFORE 404 handler ===
+app.use('/api/custom-views', require('./routes/customViews'));
+
+// 404 fallback for unknown /api/* routes (kept AFTER all real mounts)
+app.use('/api', (req, res) => res.status(404).json({ error: 'Not found', path: req.originalUrl }));
+
 app.listen(PORT, () => {
     console.log(`Backend server running on http://localhost:${PORT}`);
   });

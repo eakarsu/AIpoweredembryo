@@ -38,6 +38,9 @@ export default function Layout() {
       { to: '/quality-control', icon: <FiCheckSquare />, label: 'Quality Control' },
       { to: '/billing', icon: <FiDollarSign />, label: 'Billing' },
     ]},
+    { section: 'Custom Views', items: [
+      { to: '/custom-views', icon: <FiFileText />, label: 'IVF Views' },
+    ]},
   ];
 
   return (
