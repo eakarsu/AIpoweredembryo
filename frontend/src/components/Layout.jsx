@@ -29,12 +29,17 @@ export default function Layout() {
     { section: 'AI & Analytics', items: [
       { to: '/predictions', icon: <FiTrendingUp />, label: 'Pregnancy Predictions' },
       { to: '/ai-reports', icon: <FiFileText />, label: 'AI Reports' },
+      { to: '/lab-anomaly-detect', icon: <FiCpu />, label: 'Lab Anomaly Detect' },
+      { to: '/genetic-risk-assess', icon: <FiDna />, label: 'Genetic Risk Assess' },
     ]},
     { section: 'Administration', items: [
       { to: '/doctors', icon: <FiUserCheck />, label: 'Doctors & Staff' },
       { to: '/lab-results', icon: <FiClipboard />, label: 'Lab Results' },
       { to: '/quality-control', icon: <FiCheckSquare />, label: 'Quality Control' },
       { to: '/billing', icon: <FiDollarSign />, label: 'Billing' },
+    ]},
+    { section: 'Custom Views', items: [
+      { to: '/custom-views', icon: <FiFileText />, label: 'IVF Views' },
     ]},
   ];
 

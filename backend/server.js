@@ -25,11 +25,45 @@ app.use('/api/ai-reports', require('./routes/ai-reports'));
 app.use('/api/appointments', require('./routes/appointments'));
 app.use('/api/billing', require('./routes/billing'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+// Apply pass 5 — additive route registrations.
+app.use('/api/lims', require('./routes/lims'));
+app.use('/api/ehr', require('./routes/ehr'));
+app.use('/api/lab-vendors', require('./routes/lab-vendors'));
+app.use('/api/counseling', require('./routes/counseling'));
+app.use('/api/audit-trail', require('./routes/audit-trail'));
+app.use('/api/consent', require('./routes/consent'));
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
 
 sequelize.sync({ alter: true }).then(() => {
-  app.listen(PORT, () => {
+  
+// === Custom Feature Mounts (batch_06) ===
+app.use('/api/cf-agentic-embryo-selection', require('./routes/customFeat01_AgenticEmbryoSelection'));
+app.use('/api/cf-computer-vision-embryo-grading', require('./routes/customFeat02_ComputerVisionEmbryoGrading'));
+app.use('/api/cf-implantation-probability', require('./routes/customFeat03_ImplantationProbability'));
+app.use('/api/cf-genetic-disease-screening-assistant', require('./routes/customFeat04_GeneticDiseaseScreeningAssistant'));
+app.use('/api/cf-cycle-protocol-optimization', require('./routes/customFeat05_CycleProtocolOptimization'));
+
+
+// === Batch 06 Gaps & Frontend Mounts ===
+app.use('/api/gap-ai-route-stubs-ai', require('./routes/gapFeat_ai_route_stubs_ai'));
+app.use('/api/gap-embryos-without-exposed-embryo', require('./routes/gapFeat_embryos_without_exposed_embryo'));
+app.use('/api/gap-genetic', require('./routes/gapFeat_genetic'));
+app.use('/api/gap-lab', require('./routes/gapFeat_lab'));
+app.use('/api/gap-lims-and-ehr-modules-exist-but-real-adapters-not-v', require('./routes/gapFeat_lims_and_ehr_modules_exist_but_real_adapters_not_v'));
+app.use('/api/gap-limited-regulatory-compliance-tracking-depth-cap-c', require('./routes/gapFeat_limited_regulatory_compliance_tracking_depth_cap_c'));
+app.use('/api/gap-no-webhooks-for-lab-events', require('./routes/gapFeat_no_webhooks_for_lab_events'));
+app.use('/api/gap-no-notifications-module-grep-0', require('./routes/gapFeat_no_notifications_module_grep_0'));
+app.use('/api/gap-no-mobile-app-for-embryologists', require('./routes/gapFeat_no_mobile_app_for_embryologists'));
+app.use('/api/gap-limited-frontend-pages-15-for-21', require('./routes/gapFeat_limited_frontend_pages_15_for_21'));
+
+// === Custom Views (4 endpoints) — mounted BEFORE 404 handler ===
+app.use('/api/custom-views', require('./routes/customViews'));
+
+// 404 fallback for unknown /api/* routes (kept AFTER all real mounts)
+app.use('/api', (req, res) => res.status(404).json({ error: 'Not found', path: req.originalUrl }));
+
+app.listen(PORT, () => {
     console.log(`Backend server running on http://localhost:${PORT}`);
   });
 }).catch(err => {

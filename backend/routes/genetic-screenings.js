@@ -50,6 +50,36 @@ Provide a comprehensive genetic analysis including:
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// POST /api/genetic-screenings/risk-assess/:id - disease-predisposition / counseling-oriented risk assessment
+router.post('/risk-assess/:id', auth, async (req, res) => {
+  try {
+    const screening = await GeneticScreening.findByPk(req.params.id, { include: [Embryo] });
+    if (!screening) return res.status(404).json({ error: 'Screening not found' });
+
+    const prompt = `You are an IVF clinical geneticist AI. Provide a disease-predisposition risk assessment based on this embryo screening.
+
+Screening Type: ${screening.screeningType}
+Result: ${screening.result}
+Chromosome Details: ${JSON.stringify(screening.chromosomeDetails)}
+Variants/Findings: ${screening.variants || screening.findings || 'n/a'}
+Family History (if provided): ${req.body?.family_history || 'unknown'}
+Embryo Grade: ${screening.Embryo?.gardnerGrade || 'n/a'}
+
+Return JSON only:
+{
+  "overall_risk_level": "low|moderate|high",
+  "predispositions": [{"condition": "string", "likelihood": "low|moderate|high", "evidence": "string", "actionable": true}],
+  "transfer_recommendation": "transfer|reconsider|not_recommended",
+  "counseling_points": ["string"],
+  "additional_tests_recommended": ["string"],
+  "summary": "string"
+}`;
+
+    const aiResponse = await callOpenRouter(prompt);
+    res.json({ screeningId: screening.id, aiAnalysis: aiResponse });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 router.put('/:id', auth, async (req, res) => {
   try {
     const screening = await GeneticScreening.findByPk(req.params.id);
