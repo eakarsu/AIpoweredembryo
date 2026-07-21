@@ -1,0 +1,14 @@
+'use strict';
+const test = require('node:test'); const assert = require('node:assert/strict'); const p = require('../domain/careWorkflow');
+const observations = () => ({ patientId: 'p', cycleId: 'c', sourceSystem: 'LIMS', sourceVersion: '1', consentId: 'x', consent: { status: 'granted', scope: 'care-support', retentionDays: 90 }, observations: [{ code: 'morphology', value: 3, unit: 'grade', observedAt: '2026-01-01', uncertainty: .2 }] });
+test('validates traceable observations', () => assert.equal(p.validateObservations(observations()).state, 'observations_validated'));
+test('rejects malformed observations', () => assert.throws(() => p.validateObservations({ ...observations(), observations: [{}] }), /invalid_observation/));
+test('advisory is explicitly non-diagnostic', () => assert.match(p.validateAdvisory({ modelVersion: 'm', datasetVersion: 'd', evidence: ['o1'], missingData: [], uncertainty: .2 }).label, /NON-DIAGNOSTIC/));
+test('diagnosis is forbidden', () => assert.throws(() => p.validateAdvisory({ modelVersion: 'm', datasetVersion: 'd', evidence: ['o'], missingData: [], uncertainty: .2, diagnosis: 'x' }), /forbidden/));
+test('qualified independent clinician approves', () => assert.equal(p.transition('clinician_review', 'advisory_approved', { authorId: 'a', clinician: { id: 'b', role: 'doctor', licenseVerified: true } }), 'advisory_approved'));
+test('unqualified approval fails', () => assert.throws(() => p.transition('clinician_review', 'advisory_approved', { authorId: 'a', clinician: { id: 'b', role: 'nurse', licenseVerified: true } }), /qualified/));
+test('patient cannot cross subject', () => assert.throws(() => p.requireScope({ tenantId: 't', subjectId: 'p2', role: 'patient' }, 't', 'p1', 'read_self'), /subject_scope/));
+test('integration receipt is payload-bound', () => assert.throws(() => p.integrationDelivery('FHIR', 'Observation', { x: 1 }, 'i', { payloadHash: 'bad' }), /payload_mismatch/));
+test('evaluation fails unsafe cohort', () => assert.deepEqual(p.evaluate({ accuracy: .9, calibrationError: .1, contraindicationRecall: 1, escalationRecall: 1, maxGroupDelta: .2, missingDataSafety: 1 }, { minAccuracy: .8, maxCalibrationError: .2, minContraindicationRecall: 1, minEscalationRecall: 1, maxGroupDelta: .1 }).failures, ['bias']));
+test('evaluation fails closed on missing clinical metrics', () => assert.throws(() => p.evaluate({ accuracy: .9 }, { minAccuracy: .8 }), /complete_finite_evaluation/));
+test('observation uncertainty must be calibrated probability range', () => assert.throws(() => p.validateObservations({ ...observations(), observations: [{ code: 'x', value: 1, unit: 'score', observedAt: '2026-01-01', uncertainty: 2 }] }), /invalid_observation/));

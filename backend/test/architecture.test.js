@@ -1,0 +1,4 @@
+'use strict';const test=require('node:test');const assert=require('node:assert/strict');const fs=require('fs');const root=new URL('../',`file://${__filename}`);const read=p=>fs.readFileSync(new URL(p,root),'utf8');
+test('clinical startup is nondestructive',()=>{const s=read('server.js');assert.match(s,/to_regclass/);assert.doesNotMatch(s,/sequelize\.sync|alter:\s*true|seed|kill -9/);});
+test('clinical migration preserves audit and integration failures',()=>{const s=read('migrations/001_authoritative_care.sql');for(const term of ['NON-DIAGNOSTIC','dead_letter','payload_hash','append-only','qualified_reviewer_id'])assert.match(s,new RegExp(term));});
+test('consent and retention are enforced on the authoritative path',()=>{const s=read('routes/authoritative.js');for(const term of ["consent/withdraw","consent->>'status'='granted'","retention/purge","expires_at>NOW()"] )assert.match(s,new RegExp(term));});

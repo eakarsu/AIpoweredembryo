@@ -7,7 +7,10 @@ const User = sequelize.define('User', {
   email: { type: DataTypes.STRING, unique: true, allowNull: false },
   password: { type: DataTypes.STRING, allowNull: false },
   name: { type: DataTypes.STRING, allowNull: false },
-  role: { type: DataTypes.ENUM('admin', 'doctor', 'embryologist', 'nurse'), defaultValue: 'doctor' }
+  role: { type: DataTypes.ENUM('admin', 'doctor', 'embryologist', 'nurse', 'patient'), defaultValue: 'patient' },
+  tenantId: { type: DataTypes.STRING, allowNull: true },
+  subjectId: { type: DataTypes.STRING, allowNull: true },
+  licenseVerified: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
 });
 
 // Patient Model

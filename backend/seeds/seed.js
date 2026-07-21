@@ -299,3 +299,4 @@ async function seed() {
 }
 
 seed();
+if (process.env.ALLOW_DEMO_SEED !== 'true') { console.error('Demo clinical seed refused; set ALLOW_DEMO_SEED=true explicitly. Never use demo records clinically.'); process.exit(64); }
