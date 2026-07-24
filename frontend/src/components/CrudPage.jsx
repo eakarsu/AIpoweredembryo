@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import API from '../services/api';
 import { FiPlus, FiEdit, FiTrash, FiX, FiArrowLeft, FiZap } from './Icons';
 import AIAnalysisDisplay from './AIAnalysisDisplay';
@@ -13,12 +13,12 @@ export default function CrudPage({ title, endpoint, columns, formFields, detailF
   const [aiResult, setAiResult] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
 
-  const load = () => {
+  const load = useCallback(() => {
     setLoading(true);
     API.get(endpoint).then(r => { setItems(r.data); setLoading(false); }).catch(() => setLoading(false));
-  };
+  }, [endpoint]);
 
-  useEffect(() => { load(); }, [endpoint]);
+  useEffect(() => { load(); }, [load]);
 
   const handleRowClick = (item) => {
     API.get(`${endpoint}/${item.id}`).then(r => { setSelected(r.data); setAiResult(''); }).catch(() => setSelected(item));

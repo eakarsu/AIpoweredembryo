@@ -30,6 +30,12 @@ CREATE TABLE IF NOT EXISTS care_evaluations (
  metrics JSONB NOT NULL, limits JSONB NOT NULL, accepted BOOLEAN NOT NULL, failures JSONB NOT NULL, result_hash CHAR(64) NOT NULL,
  qualified_reviewer_id TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+CREATE TABLE IF NOT EXISTS care_ai_results (
+ id UUID PRIMARY KEY, tenant_id TEXT NOT NULL, actor_id TEXT NOT NULL, feature TEXT NOT NULL,
+ input JSONB NOT NULL, output TEXT NOT NULL, model TEXT NOT NULL,
+ created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS care_ai_results_tenant_created_idx ON care_ai_results(tenant_id,created_at DESC);
 CREATE TABLE IF NOT EXISTS care_audit (
  id BIGSERIAL PRIMARY KEY, tenant_id TEXT NOT NULL, patient_id TEXT NOT NULL, actor_id TEXT NOT NULL, actor_role TEXT NOT NULL,
  action TEXT NOT NULL, resource_type TEXT NOT NULL, resource_id TEXT NOT NULL, before_hash CHAR(64), after_hash CHAR(64),

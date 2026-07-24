@@ -18,7 +18,7 @@ export default function Dashboard() {
     try {
       const { data } = await API.get('/dashboard/ai-insights');
       setInsights(data.insights);
-    } catch (err) {
+    } catch {
       setInsights('Failed to load AI insights.');
     } finally {
       setLoadingInsights(false);

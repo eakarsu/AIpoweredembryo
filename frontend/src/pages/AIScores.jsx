@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react';
-import API from '../services/api';
 import CrudPage from '../components/CrudPage';
 
 const columns = [
