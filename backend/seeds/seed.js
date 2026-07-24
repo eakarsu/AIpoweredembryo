@@ -2,13 +2,19 @@ require('dotenv').config({ path: require('path').join(__dirname, '../../.env') }
 const bcrypt = require('bcryptjs');
 const { sequelize, User, Patient, TreatmentCycle, Embryo, AIScore, PregnancyPrediction, Doctor, LabResult, GeneticScreening, TransferPlan, QualityControl, AIReport, Appointment, Billing } = require('../models');
 
+function requireDemoPassword() {
+  const password = process.env.DEMO_PASSWORD || process.env.SEED_DEMO_PASSWORD || process.env.DEMO_SEED_PASSWORD || '';
+  if (password.length < 12 || password.length > 1024) throw new Error('DEMO_PASSWORD must contain 12-1024 characters');
+  return password;
+}
+
 async function seed() {
   try {
     await sequelize.sync({ force: true });
     console.log('Database synced');
 
     // Users
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const hashedPassword = await bcrypt.hash(requireDemoPassword(), 10);
     await User.bulkCreate([
       { email: 'admin@ivfclinic.com', password: hashedPassword, name: 'Dr. Admin', role: 'admin' },
       { email: 'doctor@ivfclinic.com', password: hashedPassword, name: 'Dr. Sarah Chen', role: 'doctor' },
