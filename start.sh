@@ -61,6 +61,7 @@ source "$ROOT/.env"
 set +a
 frontend_port="${FRONTEND_PORT:-3000}"
 export ALLOWED_ORIGINS="${ALLOWED_ORIGINS:-http://127.0.0.1:$frontend_port}"
+if [ "${NODE_ENV:-development}" != production ] && [ "${ENABLE_DEMO_CREDENTIAL_AUTOFILL:-true}" = true ]; then (cd "$ROOT/backend" && npm run migrate >/dev/null && node seeds/provision-demo-credentials.js); fi
 case "${1:-start}" in
   start)
     (cd "$ROOT/backend" && exec npm start) & backend_pid=$!
