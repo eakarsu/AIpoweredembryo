@@ -50,7 +50,7 @@ export default function Login() {
           </button>
         </form>
         <button className="demo-btn" onClick={fillDemo}>
-          Quick Demo Login (Click to Fill Credentials)
+          Auto Fill Demo Credentials
         </button>
       </div>
     </div>
