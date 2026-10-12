@@ -1,3 +1,4 @@
+import AIReportLibrary from "./AIReportLibrary";
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { FiHome, FiUsers, FiActivity, FiTarget, FiCpu, FiTrendingUp, FiUserCheck, FiClipboard, FiDna, FiCalendar, FiCheckSquare, FiFileText, FiClock, FiDollarSign, FiLogOut } from './Icons';
 
@@ -70,7 +71,7 @@ export default function Layout() {
             <FiLogOut /> Sign Out
           </button>
         </div>
-      </aside>
+      <AIReportLibrary /></aside>
       <main className="main-content">
         <Outlet />
       </main>

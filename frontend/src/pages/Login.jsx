@@ -1,20 +1,24 @@
+import { useRef as useDemoLoginRef, useState as useDemoLoginState } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 
 export default function Login() {
+  const demoLoginLock = useDemoLoginRef(false);
+  const [demoLoginBusy, setDemoLoginBusy] = useDemoLoginState(false);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e, demoLoginCredentials) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     try {
-      const { data } = await API.post('/auth/login', { email, password });
+      const { data } = await API.post('/auth/login', { email: (demoLoginCredentials?.email ?? email), password: (demoLoginCredentials?.password ?? password) });
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       navigate('/');
@@ -49,8 +53,21 @@ export default function Login() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-        <button className="demo-btn" onClick={fillDemo}>
-          Auto Fill Demo Credentials
+        <button disabled={demoLoginBusy} className="demo-btn" onClick={async (event) => {
+ if (demoLoginLock.current) return;
+ demoLoginLock.current = true; setDemoLoginBusy(true);
+ const values = {};
+ const captureDemoValue = (key, value) => { values[key] = value; return value; };
+ try {
+  await (async () => {
+    setEmail(captureDemoValue("email", import.meta.env.VITE_DEMO_EMAIL || ''));
+    setPassword(captureDemoValue("password", import.meta.env.VITE_DEMO_PASSWORD || ''));
+  })(event);
+  if (values.error || typeof values.email !== 'string' || !values.email || typeof values.password !== 'string' || !values.password) { setError(typeof values.error === 'string' ? values.error : 'Demo credentials are unavailable.'); return; }
+  await handleLogin(event, { email: values.email, password: values.password });
+ } finally { demoLoginLock.current = false; setDemoLoginBusy(false); }
+}}>
+          Log In as Demo
         </button>
       </div>
     </div>
